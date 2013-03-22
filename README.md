@@ -2,7 +2,10 @@
 
 Netdev is a vendor-neutral network abstraction framework contributed freely to the DevOps 
 community.  This module provides the Arista Networks EOS specific provider for implementing 
-the netdev types (netdevops/netdev-stdlib) in EOS.
+the netdev types (netdevops/netdev_stdlib) in EOS.
+
+NOTE: Dependency on installing the netdev_stdlib which will be submitted to Puppet Forge very
+soon along with this module  In the meantime, you can grab a copy from Github [https://github.com/NetdevOps/puppet-netdev-stdlib].
 
 
 # EXAMPLE USAGE
@@ -49,7 +52,7 @@ node "myswitch1234.mycorp.com" {
 # DEPENDENCIES
 
   * Puppet 2.7.19
-  * Puppet module netdevops/netdev-stdlib
+  * Puppet module netdevops/netdev_stdlib 
   * Netdev extension for EOS
 
 # INSTALLATION ON PUPPET-MASTER
