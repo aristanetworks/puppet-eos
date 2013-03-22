@@ -62,7 +62,7 @@ See RESOURCE-STDLIB.md for documentation and usage examples
 
 # CONTRIBUTORS
 
-Peter Sprygada, Juniper Networks
+Peter Sprygada, Arista Networks
 
 # LICENSE
 
