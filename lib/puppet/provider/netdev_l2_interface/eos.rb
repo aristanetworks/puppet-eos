@@ -1,43 +1,33 @@
 =begin
-* Puppet Module  : netdev_stdlib_eos
-* Author         : Peter Sprygada
-* File           : puppet/provider/netdev_l2_interface/eos.rb
-* Version        : 2013-03-22
-* Platform       : EOS 4.10.x 
-* Description    : 
-*
-*   This file contains the EOS specific code to implement a 
-*   netdev_l2_interface.   This module will manage EOS switchport
-*   interfaces for providing layer 2 services.
-*
-*
-* Copyright (c) 2013  Arista Networks. All Rights Reserved.
-*
-* YOU MUST ACCEPT THE TERMS OF THIS DISCLAIMER TO USE THIS SOFTWARE, 
-* IN ADDITION TO ANY OTHER LICENSES AND TERMS REQUIRED BY ARISTA NETWORKS.
-* 
-* ARISTA IS WILLING TO MAKE THE INCLUDED SCRIPTING SOFTWARE AVAILABLE TO YOU
-* ONLY UPON THE CONDITION THAT YOU ACCEPT ALL OF THE TERMS CONTAINED IN THIS
-* DISCLAIMER. PLEASE READ THE TERMS AND CONDITIONS OF THIS DISCLAIMER
-* CAREFULLY.
-*
-* THE SOFTWARE CONTAINED IN THIS FILE IS PROVIDED "AS IS." ARISTA MAKES NO
-* WARRANTIES OF ANY KIND WHATSOEVER WITH RESPECT TO SOFTWARE. ALL EXPRESS OR
-* IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES, INCLUDING ANY WARRANTY
-* OF NON-INFRINGEMENT OR WARRANTY OF MERCHANTABILITY OR FITNESS FOR A
-* PARTICULAR PURPOSE, ARE HEREBY DISCLAIMED AND EXCLUDED TO THE EXTENT
-* ALLOWED BY APPLICABLE LAW.
-*
-* IN NO EVENT WILL ARISTA BE LIABLE FOR ANY DIRECT OR INDIRECT DAMAGES, 
-* INCLUDING BUT NOT LIMITED TO LOST REVENUE, PROFIT OR DATA, OR
-* FOR DIRECT, SPECIAL, INDIRECT, CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES
-* HOWEVER CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY ARISING OUT OF THE 
-* USE OF OR INABILITY TO USE THE SOFTWARE, EVEN IF ARISTA HAS BEEN ADVISED OF 
-* THE POSSIBILITY OF SUCH DAMAGES.
+# Puppet Module  : netdev_stdlib_eos
+# Author         : Peter Sprygada
+# File           : puppet/provider/netdev_l2_interface/eos.rb
+# Version        : 2013-03-22
+# Platform       : EOS 4.10.x 
+# Description    : 
+#
+#   This file contains the EOS specific code to implement a 
+#   netdev_l2_interface.   This module will manage EOS switchport
+#   interfaces for providing layer 2 services.
+#
+#
+# Copyright 2013 Arista Networks
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 =end
 
 Puppet::Type.type(:netdev_l2_interface).provide(:eos) do
-  confine :exists => "/etc/EOS-release"
+  confine :exists => "/etc/Eos-release"
   @doc = "Manage EOS switchport interfaces"
   
   commands :netdev => "netdev" 
@@ -110,8 +100,8 @@ Puppet::Type.type(:netdev_l2_interface).provide(:eos) do
 
   def self.instances
     Puppet.debug("Searching device for resources")
-    interfaces = eval netdev('l2interface', 'list', '--output', 'ruby-hash')
-    interfaces.each.collect do |key, value|
+    resp = eval netdev('l2interface', 'list', '--output', 'ruby-hash')
+    resp['result'].each.collect do |key, value|
       new(:name => key,
           :ensure => :present,
           :vlan_tagging => value['vlan_tagging'],

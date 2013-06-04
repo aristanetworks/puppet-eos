@@ -1,17 +1,17 @@
-# OVERVIEW
+# Netdev StdLib Provider for Puppet
 
-Netdev is a vendor-neutral network abstraction framework contributed freely to the DevOps 
-community.  This module provides the Arista Networks EOS specific provider for implementing 
-the netdev types (netdevops/netdev_stdlib) in EOS.
+## OVERVIEW
+Netdev is a vendor-neutral network abstraction framework contributed freely 
+to the DevOps community.  This module provides the Arista Networks EOS
+specific provider for implementing the netdev types (netdevops/netdev_stdlib) 
+in EOS.
 
-NOTE: Dependency on installing the netdev_stdlib which will be submitted to Puppet Forge very
-soon along with this module  In the meantime, you can grab a copy from Github [https://github.com/NetdevOps/puppet-netdev-stdlib].
 
 
-# EXAMPLE USAGE
-
-This module has been tested against Puppet agent 2.7.19. This example assumes that you've also installed 
-the Puppet _stdlib_ module as this example uses the _keys_ function.
+## EXAMPLE USAGE
+This module has been tested against Puppet agent 2.7.19. This example assumes 
+that you've also installed the Puppet _stdlib_ module as this example uses the
+_keys_ function.
 
 ~~~~
 node "myswitch1234.mycorp.com" {
@@ -49,24 +49,19 @@ node "myswitch1234.mycorp.com" {
 }
 ~~~~
   
-# DEPENDENCIES
-
+## DEPENDENCIES
   * Puppet 2.7.19
   * Puppet module netdevops/netdev_stdlib 
-  * Netdev extension for EOS
+  * Netdev Extension for EOS
 
-# INSTALLATION ON PUPPET-MASTER
-
+## INSTALLATION ON PUPPET-MASTER
   * puppet module install aristanetworks/netdev_stdlib_eos 
 
-# RESOURCE TYPES
-
+## RESOURCE TYPES
 See RESOURCE-STDLIB.md for documentation and usage examples
 
-# CONTRIBUTORS
-
+## CONTRIBUTORS
 Peter Sprygada, Arista Networks
 
-# LICENSE
-
+## LICENSE
 See LICENSE
