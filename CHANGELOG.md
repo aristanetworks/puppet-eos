@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 0.1.2, 2013-06-13
+* fixed a problem with creating lag resources
+
 ## 0.1.1, 2013-06-03
 * added support for new netdev extension output format
 * added facter module to dump results from "show version"

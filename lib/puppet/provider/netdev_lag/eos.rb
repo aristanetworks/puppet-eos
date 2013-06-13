@@ -2,7 +2,7 @@
 # Puppet Module  : netdev_stdlib_eos
 # Author         : Peter Sprygada
 # File           : puppet/provider/netdev_lag/eos.rb
-# Version        : 2013-03-22
+# Version        : 2013-06-13
 # Platform       : EOS 4.10.x 
 # Description    : 
 #
@@ -77,9 +77,9 @@ Puppet::Type.type(:netdev_lag).provide(:eos) do
     Puppet.debug("#{self.resource.type}: CREATE #{resource[:name]}")
     begin
       params = []
-      (params << '--lacp' << resource['lacp']) if @property_hash[:lacp]
-      (params << '--minimum_links' << resource['minimum_links']) if @property_hash[:minimum_links]
-      (params << '--links' << resource['links'].join(',')) if @property_hash[:links]
+      (params << '--lacp' << resource['lacp']) 
+      (params << '--minimum_links' << resource['minimum_links']) 
+      (params << '--links' << resource['links'].join(',')) 
       netdev('lag', 'create', resource[:name], params)
       @property_hash[:ensure] = :present
     rescue Puppet::ExecutionFailure =>  e
