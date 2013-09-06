@@ -1,14 +1,6 @@
-=begin
-# Puppet Module  : netdev_stdlib_eos
-# Author         : Peter Sprygada
-# File           : puppet/provider/netdev_device/eos.rb
-# Version        : 2013-03-22
-# Platform       : EOS 4.12.x or later
-# Description    : 
 #
-#   This file contains the EOS specific code to implement a 
-#   netdev_device.  The netdev_device is auto required for 
-#   all instantiations of devops resources.
+# Puppet Module  : eos_interface
+# File           : puppet/type/eos_interface.rb
 #
 # Copyright (c) 2013, Arista Networks
 # All rights reserved.
@@ -38,27 +30,24 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-=end
 
-Puppet::Type.type(:netdev_device).provide(:eos) do
-  confine :exists => "/etc/Eos-release"
-  @doc = "EOS Device Managed Resource for auto-require"
+Puppet::Type.newtype(:eos_interface) do
+  @doc = "EOS physical interface resource"
+
+  ensurable
   
+  newparam(:name, :namevar=>true) do
+    desc "Interface name"
+  end
   
-  ##### ------------------------------------------------------------   
-  ##### Device provider methods expected by Puppet
-  ##### ------------------------------------------------------------  
-
-  def exists?  
-    true
+  newproperty(:description) do
+    desc "Interface description"
   end
-
-  def create
-    raise "Unreachable: NETDEV create"    
+  
+  newproperty(:admin) do
+    desc "Interface admin state [up*, down]"
+    defaultto(:up)
+    newvalues(:up, :down)
   end
-
-  def destroy
-    raise "Unreachable: NETDEV destroy"        
-  end
-
+  
 end

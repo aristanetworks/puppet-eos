@@ -1,3 +1,7 @@
+#
+# Puppet Module  : eos_switchport
+# File           : puppet/type/eos_switchport.rb
+#
 # Copyright (c) 2013, Arista Networks
 # All rights reserved.
 #
@@ -27,23 +31,47 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-cmd = "FastCli -c \"show version\""
-lines = Facter::Util::Resolution.exec(cmd)
-lines = lines.split("\n")
+Puppet::Type.newtype(:eos_switchport) do
+  @doc = "EOS switchport resource"
+  
+  ensurable
 
-lines.each do |line|
-  next if line.empty?
-
-  k,v = line.split(':')
-  if !v.nil?
-    k.downcase!
-    k.gsub!(' ','_')
-    
-    fact_name = "eos_" + k
-    Facter.add(fact_name) do
-      setcode do
-        v.strip
-      end
-    end
+  newparam(:name, :namevar=>true) do
+    desc "Switchport interface name"
   end
+  
+  newproperty(:vlan_tagging) do
+    desc "Switchport vlan tagging mode"
+    defaultto(:disable)
+    newvalues(:enable,:disable)     
+  end
+    
+  newproperty(:tagged_vlans, :array_matching=>:all) do
+    desc "Array of VLAN names used for tagged packets"
+    defaultto([])
+    munge{ |v| Array(v) }
+    
+    def insync?(is)
+      is.sort == @should.sort.map(&:to_s)
+    end
+    
+    def should_to_s( value )
+      "[" + value.join(',') + "]"
+    end
+    def is_to_s( value )
+      "[" + value.join(',') + "]"
+    end
+    
+  end
+  
+  newproperty(:untagged_vlan) do
+    desc "VLAN used for untagged packets"
+  end
+      
+  autorequire(:eos_vlan) do    
+    vlans = self[:tagged_vlans] || []
+    vlans << self[:untagged_vlan] if self[:untagged_vlan]
+    vlans.flatten
+  end    
+  
 end

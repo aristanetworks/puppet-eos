@@ -40,7 +40,7 @@
 #
 =end
 
-Puppet::Type.type(:netdev_vlan).provide(:eos) do
+Puppet::Type.type(:eos_vlan).provide(:eos) do
   confine :exists => "/etc/Eos-release"
   @doc = "Manage EOS VLAN database"
   
