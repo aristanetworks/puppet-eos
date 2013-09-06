@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.1.3, YYYY-MM-DD
+* updated provider for use with new Devops Extension for EOS
+* provider now requires EOS 4.12 or later
+
 ## 0.1.2, 2013-06-13
 * fixed a problem with creating lag resources
 

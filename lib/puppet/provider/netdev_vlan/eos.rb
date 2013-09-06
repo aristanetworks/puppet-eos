@@ -3,34 +3,48 @@
 # Author         : Peter Sprygada
 # File           : puppet/provider/netdev_vlan/eos.rb
 # Version        : 2013-03-22
-# Platform       : EOS 4.10.x 
+# Platform       : EOS 4.12.x or later
 # Description    : 
 #
 #   This file contains the EOS specific code to implement a 
 #   netdev_vlan resource.  The netdev_vlan resource allows 
 #   for the management of the VLAN database in EOS.
 #
+# Copyright (c) 2013, Arista Networks
+# All rights reserved.
 #
-# Copyright 2013 Arista Networks
+# Redistribution and use in source and binary forms, with or without modification,
+# are permitted provided that the following conditions are met:
 # 
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+#   Redistributions of source code must retain the above copyright notice, this
+#   list of conditions and the following disclaimer.
 # 
-#     http://www.apache.org/licenses/LICENSE-2.0
+#   Redistributions in binary form must reproduce the above copyright notice, this
+#   list of conditions and the following disclaimer in the documentation and/or
+#   other materials provided with the distribution.
 # 
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+#   Neither the name of the {organization} nor the names of its
+#   contributors may be used to endorse or promote products derived from
+#   this software without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
 =end
 
 Puppet::Type.type(:netdev_vlan).provide(:eos) do
   confine :exists => "/etc/Eos-release"
   @doc = "Manage EOS VLAN database"
   
-  commands :netdev => "netdev"
+  commands :devops => "devops"
 
   def initialize(value={})
     super(value)
@@ -62,7 +76,7 @@ Puppet::Type.type(:netdev_vlan).provide(:eos) do
       Puppet.debug("#{self.resource.type}: CREATE #{resource[:name]}")
       params= []
       params << '--name' << resource['name']
-      netdev('vlan', 'create', resource[:vlan_id], params)
+      devops('vlan', 'create', resource[:vlan_id], params)
       @property_hash[:ensure] = :present
     rescue Puppet::ExecutionFailure =>  e
       Puppet.debug("Unable to create vlan resource")
@@ -72,7 +86,7 @@ Puppet::Type.type(:netdev_vlan).provide(:eos) do
   def destroy
     begin
       Puppet.debug("#{self.resource.type}: DESTROY #{resource[:name]}")
-      netdev('vlan', 'delete', @property_hash[:vlan_id])
+      devops('vlan', 'delete', @property_hash[:vlan_id])
       @property_hash.clear
     rescue Puppet::ExecutionFailure => e
       Puppet.debug("Unable to destroy vlan resource")
@@ -81,7 +95,7 @@ Puppet::Type.type(:netdev_vlan).provide(:eos) do
  
   def self.instances
     Puppet.debug("Searching device for resources")
-    resp = eval netdev('vlan', 'list', '--output', 'ruby-hash')
+    resp = eval devops('vlan', 'list', '--output', 'ruby-hash')
     resp['result'].each.collect do |key, value|
       new(:name => value['name'],
           :ensure => :present,
@@ -108,7 +122,7 @@ Puppet::Type.type(:netdev_vlan).provide(:eos) do
         Puppet.debug("Flushing changed parameters")
         params = []
         (params << '--name' << resource['name']) if @property_flush[:name]
-        netdev('vlan', 'edit', resource[:vlan_id],  params) if !params.empty?
+        devops('vlan', 'edit', resource[:vlan_id],  params) if !params.empty?
       end
       @property_hash = resource.to_hash
     rescue Puppet::ExecutionFailure => e

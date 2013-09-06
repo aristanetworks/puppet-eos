@@ -64,4 +64,4 @@ See RESOURCE-STDLIB.md for documentation and usage examples
 Peter Sprygada, Arista Networks
 
 ## LICENSE
-See LICENSE
+BSD-2, See LICENSE file
