@@ -28,8 +28,8 @@
 #
 
 cmd = "FastCli -c \"show version\""
-lines = Facter::Util::Resolution.exec(cmd)
-lines = lines.split("\n")
+cmd_result = Facter::Util::Resolution.exec(cmd)
+lines = cmd_result ? cmd_result.split('\n') : []
 
 lines.each do |line|
   next if line.empty?
@@ -38,7 +38,7 @@ lines.each do |line|
   if !v.nil?
     k.downcase!
     k.gsub!(' ','_')
-    
+
     fact_name = "eos_" + k
     Facter.add(fact_name) do
       setcode do
