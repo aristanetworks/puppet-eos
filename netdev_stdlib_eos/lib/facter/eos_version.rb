@@ -29,7 +29,7 @@
 
 cmd = "FastCli -c \"show version\""
 cmd_result = Facter::Util::Resolution.exec(cmd)
-lines = cmd_result ? cmd_result.split('\n') : []
+lines = cmd_result ? cmd_result.split("\n") : []
 
 lines.each do |line|
   next if line.empty?
