@@ -13,8 +13,12 @@ This repository contains the Arista EOS specific modules for use with Puppet.  A
 
 Please see the individual modules README file for more specifics about each modules implementation.
 
-## CONTRIBUTORS
-Peter Sprygada, Arista Networks
+## Getting Involved
+* irc.freenode.net: #arista
 
-## LICENSE
-BSD-2, See LICENSE file
+## Dependencies
+* EOS 4.12 or later
+* Devops Extension for EOS
+
+## License
+BSD-3, See LICENSE file

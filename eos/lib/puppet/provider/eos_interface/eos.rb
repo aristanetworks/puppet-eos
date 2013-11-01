@@ -1,32 +1,24 @@
-=begin
-# Puppet Module  : netdev_stdlib_eos
-# Author         : Peter Sprygada
-# File           : puppet/provider/netdev_interface/eos.rb
-# Version        : 2013-03-22
-# Platform       : EOS 4.12.x or later
-# Description    : 
 #
-#   This file contains the EOS specific code to implement a 
-#   netdev_interface.  The netdev_interface resource allows 
-#   management of physical Ethernet interfaces on EOS systems.
+# Puppet Module  : eos
+# File           : puppet/provider/eos_interface/eos.rb
 #
 # Copyright (c) 2013, Arista Networks
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
-# 
+#
 #   Redistributions of source code must retain the above copyright notice, this
 #   list of conditions and the following disclaimer.
-# 
+#
 #   Redistributions in binary form must reproduce the above copyright notice, this
 #   list of conditions and the following disclaimer in the documentation and/or
 #   other materials provided with the distribution.
-# 
+#
 #   Neither the name of the {organization} nor the names of its
 #   contributors may be used to endorse or promote products derived from
 #   this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 # ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -38,44 +30,39 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-=end
+require 'rubygems'
+require 'json'
 
 Puppet::Type.type(:eos_interface).provide(:eos) do
-  confine :exists => "/etc/Eos-release"
   @doc = "Manage EOS physical interfaces"
-  
-  commands :devops => "devops" 
+
+  confine :exists=> "/etc/Eos-release"
+  commands :devops => "devops"
+
+  mk_resource_methods
 
   def initialize(value={})
     super(value)
     @property_flush = {}
   end
 
-  def admin
-    @property_hash[:admin]
-  end
-  
   def admin=(value)
     @property_flush[:admin] = value
   end
 
-  def description
-    @property_hash[:description]
-  end
-  
   def description=(value)
     @property_flush[:description] = value
   end
-  
+
   def exists?
     @property_hash[:ensure] == :present
   end
-  
+
   def create
     Puppet.debug("#{self.resource.type}: CREATE #{resource[:name]}")
     raise "The interface name #{resource[:name]} is invalid"
  end
- 
+
   def destroy
     Puppet.debug("#{self.resource.type}: DESTROY #{resource[:name]}")
     devops('interface', 'delete', resource[:name])
@@ -83,7 +70,7 @@ Puppet::Type.type(:eos_interface).provide(:eos) do
 
   def self.instances
     Puppet.debug("Searching device for resources")
-    resp = eval devops('interface', 'list', '--output', 'ruby-hash')
+    resp = JSON.parse(devops('interface', 'list'))
     resp['result'].each.collect do |key, value|
       new(:name => key,
           :ensure => :present,
@@ -92,12 +79,11 @@ Puppet::Type.type(:eos_interface).provide(:eos) do
          )
     end
   end
-  
+
   def self.prefetch(resources)
     Puppet.debug("Populating existing resources using prefetch")
-    interfaces = instances
-    resources.each do |name, params|
-      if provider = interfaces.find { |interface| interface.name == params[:name] }
+    resources.keys.each do |name|
+      if provider = instances.find { |instance| instance.name == name }
         Puppet.debug("Setting #{name} provider to #{provider}")
         resources[name].provider = provider
       end
@@ -105,16 +91,18 @@ Puppet::Type.type(:eos_interface).provide(:eos) do
   end
 
   def flush
-    Puppet.debug("Start flush")
-    if @property_flush
-      Puppet.debug("Flushing changed parameters")
-      params= []
-      (params << '--admin' << resource['admin']) if @property_flush[:admin]
-      (params << '--description' << "#{resource['description']}") if @property_flush[:description]
-      devops('interface', 'edit', resource[:name], params)
+    Puppet.debug("#{self.resource.type}: FLUSH #{resource[:name]}")
+    begin
+      if @property_flush
+        Puppet.debug("Flushing changed parameters")
+        params= []
+        (params << '--admin' << resource['admin']) if @property_flush[:admin]
+        (params << '--description' << "#{resource['description']}") if @property_flush[:description]
+        devops('interface', 'edit', resource[:name], params) unless params.empty?
+      end
+      @property_hash = resource.to_hash
+    rescue Puppet::ExecutionFailure => e
+      Puppet.debug("Unable to flush resource")
     end
-    @property_hash = resource.to_hash
   end
-
-
 end
