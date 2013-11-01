@@ -44,5 +44,3 @@ if resp['status'] == 200
 
   end
 end
-
-
