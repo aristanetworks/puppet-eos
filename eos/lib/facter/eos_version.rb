@@ -34,13 +34,11 @@ resp = JSON.parse(Facter::Util::Resolution.exec(cmd))
 
 if resp['status'] == 200
   resp['result'][0].each do |key, value|
-
     fact_name = "eos_" + key
     Facter.add(fact_name) do
       setcode do
         value
       end
     end
-
   end
 end

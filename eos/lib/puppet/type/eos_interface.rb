@@ -45,9 +45,9 @@ Puppet::Type.newtype(:eos_interface) do
   end
 
   newproperty(:admin) do
-    desc "Interface admin state [up*, down]"
-    defaultto(:up)
-    newvalues(:up, :down)
+    desc "Interface state [enable*, disable]"
+    defaultto(:enable)
+    newvalues(:enable, :disable)
   end
 
 end

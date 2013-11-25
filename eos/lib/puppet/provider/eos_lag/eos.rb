@@ -71,7 +71,7 @@ Puppet::Type.type(:eos_lag).provide(:eos) do
     begin
       params = []
       (params << '--lacp' << resource['lacp']) if resource['lacp']
-      (params << '--minimum_links' << resource['minimum_links']) if resource['minimum_links']
+      (params << '--minimum-links' << resource['minimum_links']) if resource['minimum_links']
       (params << '--links' << resource['links'].join(',')) if resource['links']
       devops('lag', 'create', resource[:name], params)
       @property_hash[:ensure] = :present
@@ -120,7 +120,7 @@ Puppet::Type.type(:eos_lag).provide(:eos) do
         Puppet.debug("Flushing changed parameters")
         params = []
         (params << '--lacp' << resource['lacp']) if @property_flush[:lacp]
-        (params << '--minimum_links' << resource['minimum_links']) if @property_flush[:minimum_links]
+        (params << '--minimum-links' << resource['minimum_links']) if @property_flush[:minimum_links]
         (params << '--links' << resource['links'].join(',')) if @property_flush[:links]
         devops('lag', 'edit', resource[:name],  params) unless params.empty?
       end
